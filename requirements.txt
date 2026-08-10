@@ -9,4 +9,4 @@ cryptg==0.6.0
 PySocks==1.7.1
 httpx==0.28.1
 Jinja2==3.1.6
-python-multipart==0.0.20
+python-multipart==0.0.32
