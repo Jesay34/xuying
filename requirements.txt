@@ -1,7 +1,7 @@
 fastapi==0.115.12
 uvicorn[standard]==0.34.2
 SQLAlchemy==2.0.41
-pydantic==2.11.5
+pydantic==2.13.4
 PyYAML==6.0.2
 telethon==1.40.0
 # Telethon 可选的 C 语言 MTProto 加解密加速；常见 x86-64 / Python 3.12 环境可直接使用 manylinux wheel。
