@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+config.yaml
+secrets.env
+*.pem
+*.key
+
+# Telegram sessions
+sessions/
+*.session
+*.session-*
+
+# Runtime state
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+logs/
+log/
+runtime/
+data/
+downloads/
+library/
+visual-data/
+
+# Build / release artifacts
+build/
+dist/
+*.zip
+*.tar
+*.tar.gz

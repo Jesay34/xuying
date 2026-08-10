@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="application-name" content="序影 Xuying">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="序影">
+    <meta name="theme-color" content="#f4f5fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0d14" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="/manifest.webmanifest?v=45">
+    <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon-light-v2.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: light)" href="/static/icons/icon-xuying-light-192.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: dark)" href="/static/icons/icon-xuying-dark-192.png?v=45">
+    <title>历史资源重构 · {{ app_name }}</title>
+    <script src="/static/theme.js?v=alpha59"></script>
+    <link rel="stylesheet" href="/static/style.css?v=alpha59">
+    <link rel="stylesheet" href="/static/modern.css?v=alpha59">
+  </head>
+  <body>
+    <main class="shell setup-shell">
+      <header class="setup-header">
+        <nav class="page-nav"><a href="/">总览</a><a href="/setup">频道与账号</a><a class="active" href="/rebuild">历史补全</a><a href="/immich">Immich</a></nav>
+        <p class="eyebrow">HISTORY REBUILD</p>
+        <h1 class="setup-title">补全同一个资源库</h1>
+        <p class="subtitle">按月份或日期补下载过去内容，与实时监听共同组成一套完整资源库。</p>
+      </header>
+
+      <section class="setup-warning">
+        媒体直接写入 <code>xydown/raw</code>，整理结果直接写入
+        <code>xydown/library</code>；<code>rebuild</code> 仅保存任务清单。
+        系统按“频道 + 消息 ID”全局去重。正在监听的频道也可直接补全任意月份；
+        实时与历史媒体会汇入同一总索引，再统一计算“封面 1”人物边界并自动迁移硬链接。
+      </section>
+      <div id="rebuild-flash" class="flash" hidden></div>
+
+      <section class="setup-card">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h2>选择频道和日期</h2>
+          <p class="step-help">推荐一次处理一个月，便于核对和断点恢复。</p>
+          <form id="rebuild-form">
+            <div class="form-grid">
+              <label class="wide-field">
+                <span>选择已监听频道</span>
+                <div class="channel-picker-row">
+                  <select id="channel-preset">
+                    <option value="">正在读取已配置频道…</option>
+                  </select>
+                  <button type="button" id="refresh-rebuild-channels">刷新列表</button>
+                  <button type="button" id="manage-rebuild-channels">管理频道</button>
+                </div>
+                <small>补全与实时监听共用 Chat ID、频道名称、原档目录和人物规则。</small>
+              </label>
+              <label>
+                <span>统一频道名称</span>
+                <input id="rebuild-channel-name" readonly required>
+              </label>
+              <label>
+                <span>频道 Chat ID</span>
+                <input id="rebuild-chat-id" type="number" readonly required>
+              </label>
+              <label>
+                <span>日期选择方式</span>
+                <select id="date-mode">
+                  <option value="month">按整月</option>
+                  <option value="range">自定义日期范围</option>
+                </select>
+              </label>
+              <label id="month-field">
+                <span>选择月份</span>
+                <input id="rebuild-month" type="month" required>
+              </label>
+              <label id="start-field" hidden>
+                <span>开始日期</span>
+                <input id="rebuild-start" type="date">
+              </label>
+              <label id="end-field" hidden>
+                <span>结束日期（包含当天）</span>
+                <input id="rebuild-end" type="date">
+              </label>
+              <label>
+                <span>资源分组方式</span>
+                <select id="grouping-mode">
+                  <option value="marker">封面文字“1”开始一个人物批次</option>
+                  <option value="telegram_album">每个 Telegram 相册独立分组</option>
+                </select>
+              </label>
+              <label>
+                <span>人物开始标记</span>
+                <input id="marker-text" value="1" maxlength="32">
+              </label>
+              <label>
+                <span>广告处理</span>
+                <select id="advertisement-policy">
+                  <option value="quarantine">隔离到 advertisements（推荐）</option>
+                  <option value="keep">不生成广告硬链接，仅保留原始下载</option>
+                </select>
+              </label>
+              <label>
+                <span>Immich 浏览方式</span>
+                <select id="timeline-mode">
+                  <option value="album">人物相册 + 文件夹（推荐）</option>
+                  <option value="spaced">时间线强制留出人物间隔</option>
+                </select>
+              </label>
+              <label>
+                <span>同时下载数量</span>
+                <select id="max-concurrent-downloads">
+                  <option value="1">1 个（最稳妥）</option>
+                  <option value="2">2 个</option>
+                  <option value="3">3 个</option>
+                  <option value="5" selected>5 个（推荐）</option>
+                  <option value="8">8 个（高速网络）</option>
+                </select>
+              </label>
+              <label id="spacing-field">
+                <span>时间线人物间隔</span>
+                <select id="display-spacing-hours">
+                  <option value="24">每个人物相隔 1 天</option>
+                  <option value="12">每个人物相隔 12 小时</option>
+                  <option value="48">每个人物相隔 2 天</option>
+                  <option value="168">每个人物相隔 7 天</option>
+                </select>
+              </label>
+            </div>
+            <label class="confirm-row">
+              <input id="generate-xmp" type="checkbox" checked>
+              <span>生成 Immich XMP，确保每个人物内部顺序稳定。选“人物相册”时保留原发布日期，不强行跨天。</span>
+            </label>
+            <label class="confirm-row">
+              <input id="safe-confirm" type="checkbox" required>
+              <span>我知道广告只会从整理库隔离，所有 Telegram 原始下载仍然保留。</span>
+            </label>
+            <button class="primary-button" type="submit">创建历史重构任务</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel rebuild-panel">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">REBUILD TASKS</p>
+            <h2>任务进度</h2>
+          </div>
+          <button type="button" id="rebuild-refresh">刷新</button>
+        </div>
+        <div id="rebuild-list" class="groups-list">
+          <p class="empty">尚未创建历史重构任务。</p>
+        </div>
+      </section>
+
+      <footer>序影 Xuying {{ version }} · 本地版</footer>
+    </main>
+    <script src="/static/rebuild.js?v=alpha34"></script>
+  </body>
+</html>

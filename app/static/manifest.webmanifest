@@ -1,0 +1,37 @@
+{
+  "id": "/",
+  "name": "序影 Xuying",
+  "short_name": "序影",
+  "description": "Telegram → Immich 一体化媒体整理器",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "fullscreen"
+  ],
+  "orientation": "any",
+  "background_color": "#f4f5fa",
+  "theme_color": "#6a67f4",
+  "icons": [
+    {
+      "src": "/static/icons/icon-xuying-dark-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-xuying-dark-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-xuying-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="application-name" content="序影 Xuying">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="序影">
+    <meta name="theme-color" content="#f4f5fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0d14" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="/manifest.webmanifest?v=45">
+    <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon-light-v2.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: light)" href="/static/icons/icon-xuying-light-192.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: dark)" href="/static/icons/icon-xuying-dark-192.png?v=45">
+    <title>Immich 同步 · {{ app_name }}</title>
+    <script src="/static/theme.js?v=alpha59"></script>
+    <link rel="stylesheet" href="/static/style.css?v=alpha59">
+    <link rel="stylesheet" href="/static/modern.css?v=alpha59">
+  </head>
+  <body>
+    <main class="shell setup-shell">
+      <header class="setup-header">
+        <nav class="page-nav"><a href="/">总览</a><a href="/setup">频道与账号</a><a href="/rebuild">历史补全</a><a class="active" href="/immich">Immich</a></nav>
+        <p class="eyebrow">IMMICH INTEGRATION</p>
+        <h1 class="setup-title">Immich 外部库与人物相册</h1>
+        <p class="subtitle">时间线负责总体浏览，相册和文件夹负责把每个人物彻底分开。</p>
+      </header>
+
+      <section class="setup-warning">
+        推荐让 Immich 只读取 <code>xydown/library</code>。第一次切换前先保留旧外部库，确认新库数量和相册正确后，再从 Immich 中移除旧路径，避免重复显示。
+      </section>
+      <div id="immich-flash" class="flash" hidden></div>
+
+      <section class="setup-card">
+        <div class="section-icon">连接</div>
+        <div class="step-content">
+          <h2>连接 Immich</h2>
+          <p class="step-help">API Key 只保存在 NAS 的 <code>secrets.env</code>，页面不会回显。</p>
+          <form id="immich-form">
+            <div class="form-grid">
+              <label><span>Immich 地址</span><input id="immich-url" placeholder="http://immich-server:2283" required></label>
+              <label><span>API Key</span><input id="immich-key" type="password" placeholder="已保存时可留空"></label>
+              <label><span>外部库</span><select id="immich-library"><option value="">保存并读取外部库列表</option></select></label>
+              <label><span>整理库在 Immich 容器内的路径</span><input id="immich-path" value="/xuying-library" required></label>
+              <label><span>相册名前缀</span><input id="album-prefix" value="序影" required></label>
+              <label><span>机器人独立外部库</span><select id="forwarded-library"><option value="">请选择机器人下载专用库</option></select></label>
+              <label><span>机器人库在 Immich 容器内的路径</span><input id="forwarded-path" value="/xuying-forwarded" required></label>
+              <label><span>机器人相册名前缀</span><input id="forwarded-album-prefix" value="序影 · 机器人" required></label>
+            </div>
+            <div class="choice-grid">
+              <label class="confirm-row"><input id="auto-scan" type="checkbox"><span>整理后自动通知 Immich 扫描</span></label>
+              <label class="confirm-row"><input id="auto-album" type="checkbox" checked><span>自动为每个人物建立独立相册</span></label>
+              <label class="confirm-row"><input id="forwarded-auto-scan" type="checkbox" checked><span>机器人任务完成后自动扫描独立媒体库</span></label>
+              <label class="confirm-row"><input id="forwarded-auto-album" type="checkbox" checked><span>每个机器人任务自动建立独立相册</span></label>
+              <label class="confirm-row"><input id="forwarded-auto-archive" type="checkbox" checked><span>机器人资源自动归档，不混入主照片时间线（仍可从相册、搜索和归档查看）</span></label>
+            </div>
+            <button class="primary-button" type="submit">保存 Immich 设置</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="setup-card immich-sync-card">
+        <div class="section-icon">同步</div>
+        <div class="step-content">
+          <h2>媒体库自动同步</h2>
+          <p class="step-help">日常下载和补全完成后会自动执行。这里的两个按钮只用于首次接入、人工复查或故障恢复，不会重新下载媒体。</p>
+          <div class="immich-pipeline-grid">
+            <article class="recommendation">
+              <strong>频道人物库</strong>
+              <p>扫描 <code>xydown/library</code>，等待 Immich 入库，再幂等校正人物相册。</p>
+              <div id="main-sync-status" class="sync-target-status" aria-live="polite">正在读取状态…</div>
+              <button class="primary-button" id="sync-main-library" type="button">同步频道人物库</button>
+            </article>
+            <article class="recommendation">
+              <strong>机器人下载库</strong>
+              <p>扫描独立机器人库，并按机器人任务同步独立相册，不混入频道人物相册。</p>
+              <div id="forwarded-sync-status" class="sync-target-status" aria-live="polite">正在读取状态…</div>
+              <button class="primary-button" id="sync-forwarded-library" type="button">同步机器人下载库</button>
+            </article>
+          </div>
+          <details class="advanced-actions">
+            <summary>高级修复工具</summary>
+            <p class="step-help">仅在 Immich 已经完成入库、但相册项目仍不完整时使用。高级操作不会扫描或下载文件。</p>
+            <div class="action-row">
+              <button id="sync-albums" type="button">仅校正人物相册</button>
+              <button id="sync-forwarded-albums" type="button">仅校正机器人相册</button>
+            </div>
+          </details>
+          <div id="immich-sync-status" class="recommendation" hidden></div>
+          <div class="recommendation">
+            <strong>推荐浏览方式</strong>
+            <p>日常从“相册”进入每个人物；想看物理结构时使用 Immich 的“文件夹”。主时间线保留真实日期，不依赖一天一个人物。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="setup-card">
+        <div class="section-icon">明细</div>
+        <div class="step-content">
+          <h2>人物相册逐项对照</h2>
+          <p class="step-help">
+            每次同步后自动更新，重启后仍然保留。<b>硬链接</b>是人物目录里的媒体数，<b>相册成员</b>是 Immich 相册实际收录数，
+            <b>时间线</b>是网页和手机相册里能看到的项目数。Live Photo 的视频部分会被 Immich 合并进照片并从相册移除，
+            所以<b>时间线</b>比<b>硬链接</b>少是正常的，只有<b>待入库</b>不为零才说明真的还差东西。
+          </p>
+          <div id="album-report-summary" class="sync-target-status" aria-live="polite">正在读取明细…</div>
+          <div class="table-scroll">
+            <table class="data-table" id="album-report-table">
+              <thead>
+                <tr>
+                  <th>人物相册</th>
+                  <th>硬链接</th>
+                  <th>相册成员</th>
+                  <th>时间线</th>
+                  <th>Live Photo 合并</th>
+                  <th>待入库</th>
+                  <th>无法入库</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      <footer>序影 Xuying {{ version }} · 本地版</footer>
+    </main>
+    <script src="/static/immich.js?v=alpha59"></script>
+  </body>
+</html>
+

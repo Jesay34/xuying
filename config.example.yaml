@@ -1,0 +1,53 @@
+app:
+  name: "序影 Xuying"
+  host: "0.0.0.0"
+  port: 3434
+  timezone: "Asia/Shanghai"
+  log_level: "INFO"
+
+storage:
+  # 容器内路径。宿主机目录由 docker-compose.yml 的 XUYING_MEDIA_DIR 控制。
+  media_root: "/media/xydown"
+  download_path: "/media/xydown/raw"
+  library_path: "/media/xydown/library"
+  rebuild_path: "/media/xydown/rebuild"
+  forwarded_path: "/media/xydown/forwarded/raw"
+  forwarded_library_path: "/media/xydown/forwarded/library"
+  data_path: "/config"
+  session_path: "/config/sessions"
+
+telegram:
+  # 首次启动保持关闭；请从 Web 设置页填写自己的 Telegram API 信息并登录。
+  enabled: false
+  session_name: "xuying"
+  proxy_url: ""
+  bot_enabled: false
+  bot_allowed_user_ids: []
+  bot_max_concurrent_downloads: 5
+  # 不在示例配置中保存任何真实频道 ID。
+  channels: []
+
+organizer:
+  enabled: true
+  auto_organize: true
+  link_mode: "hardlink"
+  group_by: "telegram_media_group"
+  preserve_original_order: true
+  camera_sequence_sort: true
+  generate_xmp: true
+  group_gap_seconds: 30
+
+immich:
+  enabled: false
+  base_url: "http://immich-server:2283"
+  library_id: ""
+  external_library_path: "/external/xuying-main"
+  auto_scan: false
+  auto_album: true
+  album_prefix: "序影"
+  forwarded_library_id: ""
+  forwarded_external_library_path: "/external/xuying-forwarded"
+  forwarded_auto_scan: true
+  forwarded_auto_album: true
+  forwarded_auto_archive: true
+  forwarded_album_prefix: "序影 · 机器人"

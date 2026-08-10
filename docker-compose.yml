@@ -1,0 +1,33 @@
+name: xuying
+
+services:
+  xuying:
+    image: ${XUYING_IMAGE:-xuying-local:1.0.0-alpha.59}
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:-python:3.12-slim}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-}
+    container_name: ${XUYING_CONTAINER_NAME:-xuying}
+    labels:
+      com.xuying.version: "1.0.0-alpha.59"
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${XUYING_BIND_IP:-0.0.0.0}:${XUYING_PORT:-3434}:3434"
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      XUYING_CONFIG: /config/config.yaml
+      XUYING_MEDIA_ROOT: /media/xydown
+      XUYING_DOWNLOAD_PATH: /media/xydown/raw
+      XUYING_LIBRARY_PATH: /media/xydown/library
+      XUYING_REBUILD_PATH: /media/xydown/rebuild
+      XUYING_FORWARDED_PATH: /media/xydown/forwarded/raw
+      XUYING_FORWARDED_LIBRARY_PATH: /media/xydown/forwarded/library
+    volumes:
+      - ${XUYING_MEDIA_DIR:-./data/media}:/media/xydown
+      - ${XUYING_CONFIG_DIR:-./data/config}:/config
+    security_opt:
+      - no-new-privileges:true

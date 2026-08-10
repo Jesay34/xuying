@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="application-name" content="序影 Xuying">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="序影">
+    <meta name="theme-color" content="#f4f5fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0d14" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="/manifest.webmanifest?v=45">
+    <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon-light-v2.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: light)" href="/static/icons/icon-xuying-light-192.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: dark)" href="/static/icons/icon-xuying-dark-192.png?v=45">
+    <title>{{ app_name }}</title>
+    <script src="/static/theme.js?v=alpha59"></script>
+    <link rel="stylesheet" href="/static/style.css?v=alpha59">
+    <link rel="stylesheet" href="/static/modern.css?v=alpha59">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">TELEGRAM → IMMICH</p>
+          <h1>序影</h1>
+          <p class="subtitle">让每一组资源，回到它原本的顺序。</p>
+          <nav class="hero-nav">
+            <a href="/setup">频道与账号</a>
+            <a href="/rebuild">历史内容补全</a>
+            <a href="/immich">Immich 同步</a>
+          </nav>
+        </div>
+        <div class="status-pill"><span id="status-dot"></span><span id="system-status">检查中</span></div>
+      </header>
+
+      <section class="notice notice-alert" id="network-notice" hidden
+               role="status" aria-live="polite"></section>
+
+      <section class="notice" id="safe-notice">
+        当前处于安全模式：Telegram 下载默认关闭，不会连接你的正式频道。
+        <a class="notice-link" href="/setup">前往首次设置</a>
+      </section>
+
+      <section class="workflow-strip" aria-label="序影工作流程">
+        <span>01 下载到 raw</span><b>→</b>
+        <span>02 识别人批次</span><b>→</b>
+        <span>03 硬链接到 library</span><b>→</b>
+        <span>04 Immich 相册</span>
+      </section>
+
+      <section class="stats" aria-label="资源统计">
+        <article><strong id="messages">0</strong><span>Telegram 消息</span></article>
+        <article><strong id="media-files">0</strong><span>媒体文件</span></article>
+        <article><strong id="groups">0</strong><span>资源组</span></article>
+        <article><strong id="organized">0</strong><span>已整理</span></article>
+      </section>
+
+      <section class="panel live-download-panel">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">LIVE DOWNLOADS</p>
+            <h2>实时监听下载</h2>
+          </div>
+          <span id="live-status-badge" class="badge status-running">读取状态</span>
+        </div>
+        <div id="live-download-center" class="live-download-center">
+          <p class="empty">正在读取实时监听队列……</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">RESOURCE GROUPS</p>
+            <h2>最近资源组</h2>
+          </div>
+          <button type="button" id="refresh">刷新</button>
+        </div>
+        <div id="groups-list" class="groups-list">
+          <p class="empty">还没有资源。添加并启用频道后，新下载会显示在这里。</p>
+        </div>
+      </section>
+
+      <footer>序影 Xuying {{ version }} · 本地版</footer>
+    </main>
+    <script src="/static/app.js?v=alpha59"></script>
+  </body>
+</html>

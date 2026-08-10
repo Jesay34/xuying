@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="application-name" content="序影 Xuying">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="序影">
+    <meta name="theme-color" content="#f4f5fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0d14" media="(prefers-color-scheme: dark)">
+    <link rel="manifest" href="/manifest.webmanifest?v=45">
+    <link id="apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon-light-v2.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: light)" href="/static/icons/icon-xuying-light-192.png?v=45">
+    <link rel="icon" type="image/png" sizes="192x192" media="(prefers-color-scheme: dark)" href="/static/icons/icon-xuying-dark-192.png?v=45">
+    <title>Telegram 设置 · {{ app_name }}</title>
+    <script src="/static/theme.js?v=alpha59"></script>
+    <link rel="stylesheet" href="/static/style.css?v=alpha59">
+    <link rel="stylesheet" href="/static/modern.css?v=alpha59">
+  </head>
+  <body>
+    <main class="shell setup-shell">
+      <header class="setup-header">
+        <nav class="page-nav"><a href="/">总览</a><a class="active" href="/setup">频道与账号</a><a href="/rebuild">历史补全</a><a href="/immich">Immich</a></nav>
+        <p class="eyebrow">TELEGRAM SETTINGS</p>
+        <h1 class="setup-title">Telegram 与频道</h1>
+        <p class="subtitle">随时登录、调整代理并管理多个监听频道。</p>
+      </header>
+
+      <section class="setup-warning">
+        请只在可信的家庭局域网内完成设置。这里登录的是你的 Telegram 用户账号，
+        不会使用 Hermes 正在运行的 Session。Bot Token 只在下方“转发下载机器人”启用时填写。
+      </section>
+
+      <section class="setup-card" id="bot-step" hidden>
+        <div class="section-icon">机器人</div>
+        <div class="step-content">
+          <h2>转发与链接下载</h2>
+          <p class="step-help">
+            恢复 Hermes 的机器人下载方式。把媒体消息或 Telegram 消息链接发给机器人，
+            原档单独保存到 <code>xydown/forwarded/raw</code>，完成后自动硬链接到
+            <code>xydown/forwarded/library</code>，不会混入监听和历史补全人物库。
+          </p>
+          <div class="info-strip">
+            <b>单条：</b>直接转发媒体或发送一个消息链接，只下载这一条。<br>
+            <b>完整相册：</b><code>/album Telegram消息链接</code>，明确下载该消息所属的完整 Telegram 相册。<br>
+            <b>连续区间：</b><code>/range 起点消息链接 终点消息链接</code>，两端和中间的全部媒体组成一个任务、一个 Immich 相册。<br>
+            <b>兼容 Hermes：</b><code>/download 频道消息链接 起始ID 结束ID</code>。
+          </div>
+          <form id="bot-form">
+            <div class="form-grid">
+              <label class="wide-field">
+                <span>Bot Token（已保存时可留空）</span>
+                <input id="bot-token" type="password" autocomplete="off"
+                       placeholder="从 BotFather 获得的 Token">
+              </label>
+              <label>
+                <span>机器人同时下载数量</span>
+                <select id="bot-concurrency">
+                  <option value="1">1 个</option>
+                  <option value="3">3 个</option>
+                  <option value="5" selected>5 个（推荐）</option>
+                  <option value="8">8 个</option>
+                </select>
+              </label>
+            </div>
+            <label class="confirm-row">
+              <input id="bot-enabled" type="checkbox">
+              <span>启用机器人转发下载（仅允许当前登录的 Telegram 账号使用）</span>
+            </label>
+            <button class="primary-button" type="submit">保存机器人设置</button>
+          </form>
+          <p class="field-note" id="bot-summary">机器人尚未配置。</p>
+          <div class="bot-task-list" id="bot-task-list"></div>
+        </div>
+      </section>
+
+      <div id="flash" class="flash" hidden></div>
+
+      <section class="setup-card" id="credentials-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h2>登录 Telegram 账号</h2>
+          <p class="step-help">填写 Telegram 官方 API 信息和带国家区号的手机号。</p>
+          <form id="credentials-form">
+            <div class="form-grid">
+              <label>
+                <span>API ID</span>
+                <input id="api-id" type="number" min="1" inputmode="numeric" required
+                       autocomplete="off" placeholder="例如 12345678">
+              </label>
+              <label>
+                <span>API Hash</span>
+                <input id="api-hash" type="password" minlength="20" required
+                       autocomplete="off" placeholder="Telegram 提供的 API Hash">
+              </label>
+              <label>
+                <span>Telegram 手机号</span>
+                <input id="phone" type="tel" required autocomplete="tel"
+                       placeholder="+8613800000000">
+              </label>
+              <label>
+                <span>Telegram 代理（可留空）</span>
+                <input id="proxy-url" type="text" autocomplete="off"
+                       placeholder="http://proxy-host:7890">
+              </label>
+            </div>
+            <p class="field-note">代理用于序影连接 Telegram，与构建镜像时使用的国内镜像源无关。</p>
+            <button class="primary-button" type="submit">发送 Telegram 验证码</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="setup-card" id="code-step" hidden>
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h2>输入验证码</h2>
+          <p class="step-help">验证码通常发送到你已登录的 Telegram 客户端，而不是短信。</p>
+          <form id="code-form" class="compact-form">
+            <label>
+              <span>Telegram 验证码</span>
+              <input id="login-code" type="text" inputmode="numeric" required
+                     autocomplete="one-time-code" placeholder="输入收到的数字">
+            </label>
+            <button class="primary-button" type="submit">确认登录</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="setup-card" id="password-step" hidden>
+        <div class="step-number">2B</div>
+        <div class="step-content">
+          <h2>两步验证</h2>
+          <p class="step-help">你的账号开启了 Telegram 两步验证，需要再输入一次密码。</p>
+          <form id="password-form" class="compact-form">
+            <label>
+              <span>两步验证密码</span>
+              <input id="login-password" type="password" required
+                     autocomplete="current-password">
+            </label>
+            <button class="primary-button" type="submit">完成登录</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="setup-card" id="connection-step" hidden>
+        <div class="section-icon">账号</div>
+        <div class="step-content">
+          <h2>账号已登录</h2>
+          <p class="step-help" id="connection-summary">正在读取连接状态…</p>
+          <form id="proxy-settings-form" class="compact-form">
+            <label>
+              <span>HTTP / SOCKS5 代理（可以随时修改）</span>
+              <input id="saved-proxy-url" type="text"
+                     placeholder="http://proxy-host:7890">
+            </label>
+            <button class="primary-button" type="submit">保存并重新连接</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="setup-card" id="channel-step" hidden>
+        <div class="section-icon">编辑</div>
+        <div class="step-content">
+          <h2>添加或修改监听频道</h2>
+          <p class="step-help">从当前 Telegram 账号可访问的频道中选择，也可以手动填写；保存后立即更新监听。</p>
+          <form id="channel-form">
+            <div class="form-grid">
+              <label class="wide-field">
+                <span>选择 Telegram 频道</span>
+                <div class="channel-picker-row">
+                  <select id="available-channel">
+                    <option value="">正在读取频道列表…</option>
+                  </select>
+                  <button type="button" id="refresh-channel-list">刷新列表</button>
+                  <button type="button" id="new-channel">新增频道</button>
+                </div>
+                <small>找不到的私密频道仍可在下方手动填写 Chat ID。</small>
+              </label>
+              <label>
+                <span>频道名称</span>
+                <input id="channel-name" type="text" value="我的频道" required>
+              </label>
+              <label>
+                <span>频道 Chat ID</span>
+                <input id="chat-id" type="number" placeholder="填写频道 Chat ID" required>
+              </label>
+              <label>
+                <span>从什么时候开始监听</span>
+                <select id="channel-start-mode">
+                  <option value="now">从现在开始，只接收后续更新（推荐）</option>
+                  <option value="date">从指定日期开始，自动补取至今</option>
+                  <option value="message_id">按消息 ID（高级兼容）</option>
+                </select>
+              </label>
+              <label id="channel-start-date-field" hidden>
+                <span>开始监听日期</span>
+                <input id="channel-start-date" type="date">
+              </label>
+              <label id="channel-start-message-field" hidden>
+                <span>起始消息 ID（高级）</span>
+                <input id="start-message-id" type="number" min="0" value="0">
+              </label>
+              <label>
+                <span>资源分组方式</span>
+                <select id="channel-grouping-mode">
+                  <option value="telegram_album">按 Telegram 相册分组</option>
+                  <option value="marker">封面文字“1”开始一个人物批次</option>
+                </select>
+              </label>
+              <label>
+                <span>人物开始标记</span>
+                <input id="channel-marker-text" value="1" maxlength="32">
+              </label>
+              <label>
+                <span>广告处理</span>
+                <select id="channel-ad-policy">
+                  <option value="quarantine">隔离到广告目录（推荐）</option>
+                  <option value="keep">仅保留原始下载，不创建广告硬链接</option>
+                </select>
+              </label>
+              <label>
+                <span>Immich 浏览方式</span>
+                <select id="channel-timeline-mode">
+                  <option value="album">人物相册 + 文件夹（推荐，不伪造跨天日期）</option>
+                  <option value="spaced">时间线强制留出人物间隔</option>
+                </select>
+              </label>
+              <label id="channel-spacing-field">
+                <span>时间线人物间隔</span>
+                <select id="channel-spacing-hours">
+                  <option value="24">1 天</option>
+                  <option value="12">12 小时</option>
+                  <option value="48">2 天</option>
+                  <option value="168">7 天</option>
+                </select>
+              </label>
+              <label>
+                <span>频道排列优先级（数字越小越靠前）</span>
+                <input id="channel-display-order" type="number" min="0" max="9999"
+                       value="0">
+              </label>
+              <label>
+                <span>实时监听同时下载数量</span>
+                <select id="channel-max-concurrent">
+                  <option value="1">1 个（最稳妥）</option>
+                  <option value="2">2 个</option>
+                  <option value="3">3 个</option>
+                  <option value="5" selected>5 个（推荐）</option>
+                  <option value="8">8 个（高速网络）</option>
+                </select>
+              </label>
+              <label class="wide-field">
+                <span>广告识别词（逗号或换行分隔）</span>
+                <textarea id="channel-ad-keywords" rows="3">广告, 推广, 加入群, 加入内部群, 永久会员, 一次付费, 自助下单, 售后, 优惠, 价格, t.me/</textarea>
+              </label>
+            </div>
+            <p class="field-note">按日期开始时，序影会自动找到当天的消息位置；与历史补全重叠的媒体会自动去重。“封面 1”模式会把后续多个消息框并入同一人物，直到下一张封面 1。</p>
+            <button class="primary-button" type="submit">保存频道并更新监听</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="setup-card" id="channels-step" hidden>
+        <div class="section-icon">频道</div>
+        <div class="step-content">
+          <h2>正在管理的频道</h2>
+          <div id="channels-list" class="channel-list">
+            <p class="empty">尚未添加频道。</p>
+          </div>
+        </div>
+      </section>
+
+      <footer>序影 Xuying {{ version }} · 本地版</footer>
+    </main>
+    <script src="/static/setup.js?v=alpha59"></script>
+  </body>
+</html>

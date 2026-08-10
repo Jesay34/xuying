@@ -1,0 +1,40 @@
+name: Bug report
+description: Report a reproducible Xuying problem
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove API keys, phone numbers, Telegram Session data, private channel IDs and private media paths before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Xuying version
+      placeholder: 1.0.0-alpha.59
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: NAS/OS, Docker and Compose versions, filesystem if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Redacted logs
+      render: shell
