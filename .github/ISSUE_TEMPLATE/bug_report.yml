@@ -11,7 +11,7 @@ body:
     id: version
     attributes:
       label: Xuying version
-      placeholder: 1.0.0-alpha.59
+      placeholder: 1.0.0-alpha.60
     validations:
       required: true
   - type: textarea

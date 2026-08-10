@@ -2,7 +2,7 @@ name: xuying
 
 services:
   xuying:
-    image: ${XUYING_IMAGE:-xuying-local:1.0.0-alpha.59}
+    image: ${XUYING_IMAGE:-xuying-local:1.0.0-alpha.60}
     pull_policy: build
     build:
       context: .
@@ -12,7 +12,7 @@ services:
         PIP_INDEX_URL: ${PIP_INDEX_URL:-}
     container_name: ${XUYING_CONTAINER_NAME:-xuying}
     labels:
-      com.xuying.version: "1.0.0-alpha.59"
+      com.xuying.version: "1.0.0-alpha.60"
     restart: unless-stopped
     init: true
     ports:

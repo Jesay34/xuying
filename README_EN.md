@@ -2,7 +2,7 @@
 
 > A self-hosted NAS service for Telegram media archiving, deterministic organization, XMP sidecars, and Immich album synchronization.
 
-Current version: **1.0.0-alpha.59** · [中文 README](README.md)
+Current version: **1.0.0-alpha.60** · [中文 README](README.md)
 
 Xuying is designed for media that you are authorized to access and store. It keeps original downloads in `raw/`, builds an organized library using hard links, and lets Immich index the organized view without moving or duplicating the source media.
 

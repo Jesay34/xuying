@@ -1,4 +1,4 @@
-const CACHE_NAME = "xuying-shell-alpha59";
+const CACHE_NAME = "xuying-shell-alpha60";
 const SHELL_ASSETS = [
   "/",
   "/setup",

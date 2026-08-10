@@ -2,6 +2,14 @@
 
 All notable changes to Xuying are documented here.
 
+## 1.0.0-alpha.60
+
+### Mobile layout fix
+
+- Prevented the Immich album report table from forcing the whole page wider than a phone viewport.
+- Kept the report table horizontally scrollable within its card and added a mobile scrolling hint.
+- Bumped the service-worker and static asset cache versions so the fix is picked up after deployment.
+
 ## 1.0.0-alpha.59
 
 ### Public-release preparation

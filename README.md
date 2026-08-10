@@ -3,7 +3,7 @@
 > **中文**：一个面向 NAS 的自托管 Telegram 媒体归档与整理工具，支持原文件保留、硬链接整理、XMP 元数据、历史补全，以及 Immich 外部库与相册同步。  
 > **English**: A self-hosted NAS service for Telegram media archiving and organization, with original-file preservation, hard-link libraries, XMP metadata, resumable history backfill, and Immich synchronization.
 
-**当前版本 / Current version:** `1.0.0-alpha.59`  
+**当前版本 / Current version:** `1.0.0-alpha.60`<br>
 **语言 / Language:** 中文 + English · [English-only README](README_EN.md)
 
 ---
